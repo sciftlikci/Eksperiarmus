@@ -42,7 +42,7 @@ class DataTransformer(object):
                                                              list(self.input_data["INSURANCE_TYPE"])]
 
     def service_type_transform(self):
-        if not set(list(self.input_data["SERVICE_TYPE"].unique())) <= {"SPECIAL", "YETKİLİ"}:
+        if not set(list(self.input_data["SERVICE_TYPE"].unique())) <= {"SPECIAL", "AUTHORIZED"}:
             get_info_message_text_by_code_transformer(3)
             raise ServiceTypeError
         else:
@@ -87,7 +87,7 @@ class DataTransformer(object):
         func = np.vectorize(self.insurance_value_transform_downstream)
         insurance_value_transformed = np.array([func(element[0], element[1])[0] for
                                                 element in price_tuple])
-        return np.divide(input_df["TOPLAM_TUTAR_DOSYA"].values, insurance_value_transformed)
+        return np.divide(input_df["TOTAL_FILE_COST"].values, insurance_value_transformed)
 
     def damage_level_transform_downstream(self, predicted_damage_level, value):
         return 0 if 0 <= predicted_damage_level / value <= 0.1 else 0.5 if 0.1 < predicted_damage_level / value <= 0.3 else 1
@@ -107,7 +107,7 @@ class DataTransformer(object):
             else:
                 self.input_data = input_data [["INSURANCE_TYPE", "SERVICE_TYPE", "ESTIMATED DAMAGE COST",
                                               "SERVICE CITY", "BRAND_NAME", "MODEL_NAME"]] if not cluster else \
-                                  input_data[["FİKTİF DOSYA_NO", "INSURANCE_TYPE", "SERVICE_TYPE", "ESTIMATED DAMAGE COST",
+                                  input_data[["FILE ID", "INSURANCE_TYPE", "SERVICE_TYPE", "ESTIMATED DAMAGE COST",
                                               "SERVICE CITY", "VEHICLE_VALUE", 'ORIGINAL VEHICLE VALUE']]
         except Exception as e:
             get_info_message_text_by_code_transformer(1)
@@ -121,7 +121,7 @@ class DataTransformer(object):
                 self.insurance_value_transform()
                 self.damage_level_transform()
             else:
-                self.transformed_df.insert(0, "FİKTİF DOSYA_NO", self.input_data["FİKTİF DOSYA_NO"])
+                self.transformed_df.insert(0, "FILE ID", self.input_data["FILE ID"])
                 self.transformed_df["ESTIMATED DAMAGE COST"] = self.input_data["ESTIMATED DAMAGE COST"]
                 self.transformed_df["VEHICLE_VALUE"] = self.input_data["VEHICLE_VALUE"]
                 self.transformed_df['ORIGINAL VEHICLE VALUE'] = self.input_data['ORIGINAL VEHICLE VALUE']
