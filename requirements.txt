@@ -1,0 +1,9 @@
+pyclustering
+scikit-learn
+pygal
+docx2pdf
+python-docx
+PyQt5
+numpy
+pandas
+textdistance
